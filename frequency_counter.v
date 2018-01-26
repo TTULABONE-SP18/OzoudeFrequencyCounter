@@ -1,4 +1,4 @@
-`timescale 1ns/1ps
+`timescale 1 ns / 1 ps
 // Frequency Counter Module
 // Victoria Rodriguez
 // This module counts the number of inputs it receives in one second using the 100 MHz clock.
