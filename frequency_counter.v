@@ -10,11 +10,13 @@ module freq_counter(
 	output reg [3:0] freq,
 	// Register for regular counter
 	output reg[64:0] count);
+	
+
 	// Register for input counter
 	reg [3:0] in_count;
+	reg [6:0] seg;
 
-
-	always@(posedge CLK)
+	always @ (posedge CLK)
 	begin
 		// RESET
 		case (RESET)
@@ -42,7 +44,11 @@ module freq_counter(
 				freq <= in_count;
 			end
 		endcase
-
 	end
+
+	disp_freq display(
+		.freq(freq),
+		// Add an input into the parameters from the constraints file for the 7-seg display
+		.disp_out(seg));
 
 endmodule
