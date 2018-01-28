@@ -1,7 +1,7 @@
 `timescale 1 ns / 1 ps
 // Frequency Counter Display Module
 module disp_freq(
-	input freq,
+	input [3:0] freq,
 	output reg [6:0] disp_out
 	);
 // the hex-to-7-segment decoder
@@ -24,6 +24,6 @@ module disp_freq(
         4'b1110: disp_out = 7'b1001111;  // E
         4'b1111: disp_out = 7'b1000111;  // F
         default: disp_out = 7'bxxxxxxx;
-        endcase     
+        endcase
 
 endmodule

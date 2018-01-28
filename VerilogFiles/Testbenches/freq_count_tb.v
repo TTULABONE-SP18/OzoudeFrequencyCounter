@@ -2,28 +2,33 @@
 // Frequency Counter Testbench Module
 
 module freq_count_tb();
-  reg [3:0] freq;
+  wire [3:0] freq;
   reg clk, in;
   // reg [64:0] count;
 
-  freq_counter test(
-    .CLK(clk),
-    .IN(in),
-    .freq(freq)
-    // .count()
-    );
 
   initial begin
     clk = 0;
     in = 0;
-    freq = 0;
+//    #1000
+//    in = 1;
+// Test frequency is 10 MHz
+    forever #100 in = !in;
+//    freq <= 0;
+//    $finish
   end
 
-// Clock is 100MHz
+// Clock is 50MHz
   always
-  #10 clk = !clk;
+  #20 clk = !clk;
 // Test frequency is 1 MHz
-  always
-  #1000 in = !in;
+//  always
+//  #1000 in = !in;
+freq_counter test(
+  .CLK(clk),
+  .IN(in),
+  .freq(freq)
+  // .count()
+  );
 
 endmodule
