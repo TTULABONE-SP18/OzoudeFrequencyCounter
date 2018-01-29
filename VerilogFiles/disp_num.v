@@ -1,14 +1,14 @@
 `timescale 1 ns / 1 ps
 // Frequency Counter Display Module
-module disp_freq(
+module disp_num(
 	input clk,
-	input [3:0] freq,
+	input [3:0] in,
 	output reg [6:0] disp_out
 	);
 
     always @ (posedge clk)
     begin
-        case (freq)
+        case (in)
 	   4'b0000: LED_out = 7'b0000001; // "0"
         4'b0001: LED_out = 7'b1001111; // "1"
         4'b0010: LED_out = 7'b0010010; // "2"
