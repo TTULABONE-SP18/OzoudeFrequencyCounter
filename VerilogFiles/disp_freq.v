@@ -5,7 +5,7 @@ module disp_freq(
 	input [3:0] freq,
 	output reg [6:0] disp_out
 	);
-// the hex-to-7-segment decoder
+
     always @ (posedge clk)
     begin
         case (freq)
