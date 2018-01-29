@@ -7,7 +7,7 @@ module freq_counter(
 	input CLK,
 	input IN,
 	// Register for frequency, use for other modules
-	output reg [3:0] freq = 4'b0,
+	output reg [31:0] freq = 32'b0,
 	// Register for regular counter
 	output reg[31:0] count = 32'b0,
 	// 7-segment Display Cathodes
@@ -32,28 +32,48 @@ module freq_counter(
 	begin
 		case (1)
 			RESET == 1'b1: begin
-				freq 		<= 0;
-				in_count 		<= 0;
-				count 		<= 0;
+				freq 	<= 0;
+				in_count 	<= 0;
+				count 	<= 0;
 			end
 
 			count == max - 1: begin
-				count <= 32'b0;
-				freq <= in_count;
-				in_count <= 32'b0;
+				count 	<= 32'b0;
+				// freq 	<= in_count;
+				// in_count 	<= 32'b0;
 			end
 
-			freq < 10:
-				anode <= freq;
+			// freq < 10:
+			// 	anode <= freq;
 
 			default: begin
 				count <= count + 1'b1;
-				case(IN)
-					1'b1: in_count <= in_count + 1;
-					default: in_count <= in_count;
-				endcase
+				// case(IN)
+				// 	1'b1: in_count <= in_count + 1;
+				// 	default: in_count <= in_count;
+				// endcase
 			end
 		endcase
+	end
+
+	reg last = 0;
+
+	always @(posedge CLK) begin
+	    last <= IN;
+	end
+	reg [32:0]edge_count = 0;
+	// reg [15:0]freq = 0;
+	always @(posedge CLK) begin
+	    case(count)
+	    32'b0: begin
+	    	   freq <= edge_count;
+		   edge_count <= 0;
+	    end
+	    default:
+	    // detect edge, was low and now high
+	    if(~last & IN)
+	    edge_count <= edge_count + 1;
+	    endcase
 	end
 
 	always @ (anode)
