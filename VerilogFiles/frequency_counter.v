@@ -47,7 +47,7 @@ module freq_counter(
 				anode <= freq;
 
 			default: begin
-				count <= count + 1;
+				count <= count + 1'b1;
 				case(IN)
 					1'b1: in_count <= in_count + 1;
 					default: in_count <= in_count;
@@ -79,7 +79,4 @@ module freq_counter(
 		default: cathode_inv = 7'bxxxxxxx;
 		endcase
 		end
-
-
-
 endmodule
