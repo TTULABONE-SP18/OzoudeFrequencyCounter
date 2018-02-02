@@ -22,20 +22,21 @@ module freq_counter(
 	// 7-segment Display Anodes
 	output [3:0] anode,
 	output DP);
-	// Register for frequency, use for other modules
-	reg [15:0] freq = 16'b0;
-	// Register for regular counter
-	reg[31:0] count = 32'b0;
 
+	// Register for frequency
+	reg [15:0] freq = 16'b0;
+	// Register for one second counter
+	reg[31:0] count = 32'b0;
 	// Register for input counter
 	reg [3:0]edge_count = 0;
-	// reg [3:0] in_count;
+	// Register for storing last signal, used for detecting rising edge
 	reg last = 0;
 
 	// Assignments
 	assign DP = 1;
 	localparam max = 100000000;
 
+     // Flip-flop stores last value in register
 	always @(posedge CLK) begin
 		last <= IN;
 	end
@@ -44,12 +45,10 @@ module freq_counter(
 	begin
 		case (1)
 			count < max: begin
+				// If detecting a HIGH and the last value was LOW, then it's a rising edge
 				if(~last & IN)
-				edge_count <= edge_count + 1;
+					edge_count <= edge_count + 1;
 				end
-
-			// freq < 10:
-			// 	anode <= freq;
 
 			default: begin
 				freq <= edge_count;
