@@ -1,102 +1,69 @@
 `timescale 1 ns / 1 ps
 // Frequency Counter Module
-// Victoria Rodriguez
-// This module counts the number of inputs it receives in one second using the 100 MHz clock.
-module freq_counter(
-	input RESET,
-	input CLK,
-	input IN,
-	// Register for frequency, use for other modules
-	output reg [31:0] freq = 32'b0,
-	// Register for regular counter
-	output reg[31:0] count = 32'b0,
-	// 7-segment Display Cathodes
-	output reg [6:0] cathode,
-	// 7-segment Display Anodes
-	output reg [3:0] anode,
-	output DP);
+// Developer: 	 Victoria Rodriguez
+// Description: This module counts the number of inputs it receives in one second using the 100 MHz
+// 			 clock.
+// Methodology: This module was coded for a 100 MHz clock, meaning that there should be 100 million
+//			 ticks in one second. That means that after the counter has counted 100 million ticks
+// 			 we know that one second has passed. Another counter works simultaneously to count
+// 			 the number of inputs coming in from the Pmod port. After one second has elapsed,
+// 			 then we know that the number of inputs (cycles) is the frequency of of the signal
+// 			 coming into the Pmod port. Hertz is measured in cycles/sec, and since we know it's
+// 			 been one second, we don't have to do any further math-- the input counter should be
+// 			 the frequency of the input as is.
 
-	// Inverse of cathode
-	reg [6:0] cathode_inv;
+module freq_counter(
+     // 100 MHz clock
+	input CLK,
+	// Pmod port input JA1, renamed in constraints file to IN
+	input [1:0] IN,
+	// 7-segment Display Cathodes
+	output [6:0] cathode,
+	// 7-segment Display Anodes
+	output [3:0] anode,
+	output DP);
+	// Register for frequency, use for other modules
+	reg [15:0] freq = 16'b0;
+	// Register for regular counter
+	reg[31:0] count = 32'b0;
+
 	// Register for input counter
-	reg [3:0] in_count;
+	reg [3:0]edge_count = 0;
+	// reg [3:0] in_count;
+	reg last = 0;
 
 	// Assignments
 	assign DP = 1;
-	assign RESET = 0;
+	localparam max = 100000000;
 
-	localparam max = 50000000;
-
+	always @(posedge CLK) begin
+		last <= IN;
+	end
 
 	always @ (posedge CLK)
 	begin
 		case (1)
-			RESET == 1'b1: begin
-				freq 	<= 0;
-				in_count 	<= 0;
-				count 	<= 0;
-			end
-
-			count == max - 1: begin
-				count 	<= 32'b0;
-				// freq 	<= in_count;
-				// in_count 	<= 32'b0;
-			end
+			count < max: begin
+				if(~last & IN)
+				edge_count <= edge_count + 1;
+				end
 
 			// freq < 10:
 			// 	anode <= freq;
 
 			default: begin
-				count <= count + 1'b1;
-				// case(IN)
-				// 	1'b1: in_count <= in_count + 1;
-				// 	default: in_count <= in_count;
-				// endcase
+				freq <= edge_count;
+				edge_count <= 0;
+				count <= 0;
 			end
 		endcase
 	end
 
-	reg last = 0;
+	disp_controller(
+		.clk(CLK),
+		.displayed_number(freq),
+		.digits(anode),
+		.segments(~cathode)
+		);
 
-	always @(posedge CLK) begin
-	    last <= IN;
-	end
-	reg [32:0]edge_count = 0;
-	// reg [15:0]freq = 0;
-	always @(posedge CLK) begin
-	    case(count)
-	    32'b0: begin
-	    	   freq <= edge_count;
-		   edge_count <= 0;
-	    end
-	    default:
-	    // detect edge, was low and now high
-	    if(~last & IN)
-	    edge_count <= edge_count + 1;
-	    endcase
-	end
-
-	always @ (anode)
-		begin
-		cathode_inv <= ~cathode;
-		case(anode)
-		4'b0000: cathode_inv = 7'b1111110;  // 0
-		4'b0001: cathode_inv = 7'b0110000;  // 1
-		4'b0010: cathode_inv = 7'b1101101;  // 2
-		4'b0011: cathode_inv = 7'b1111001;  // 3
-		4'b0100: cathode_inv = 7'b0110011;  // 4
-		4'b0101: cathode_inv = 7'b1011011;  // 5
-		4'b0110: cathode_inv = 7'b1011111;  // 6
-		4'b0111: cathode_inv = 7'b1110000;  // 7
-		4'b1000: cathode_inv = 7'b1111111;  // 8
-		4'b1001: cathode_inv = 7'b1110011;  // 9
-		4'b1010: cathode_inv = 7'b1110111;  // A
-		4'b1011: cathode_inv = 7'b0011111;  // b
-		4'b1100: cathode_inv = 7'b0001101;  // c
-		4'b1101: cathode_inv = 7'b0111101;  // d
-		4'b1110: cathode_inv = 7'b1001111;  // E
-		4'b1111: cathode_inv = 7'b1000111;  // F
-		default: cathode_inv = 7'bxxxxxxx;
-		endcase
-		end
 endmodule
