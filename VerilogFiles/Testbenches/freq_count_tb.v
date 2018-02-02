@@ -12,9 +12,9 @@ module freq_count_tb();
           forever #20000000 in = !in;
      end
 
-// Clock is 50MHz
+     // Clock is 100MHz
      always
-          #20 clk = !clk;
+          #10 clk = !clk;
 
      freq_counter test(
           .CLK(clk),
