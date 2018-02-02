@@ -10,7 +10,7 @@ module disp_controller(
      input reset,                  // Reset button
      output reg [3:0] digits,      // anode signals of the 7-segment LED display
      output reg [6:0] segments,     // cathode patterns of the 7-segment LED display
-     input [1:0] IN
+     input IN
     );
 
      wire [15:0] displayed_number; // counting number to be displayed
@@ -72,7 +72,7 @@ module disp_controller(
      always @(*)
      begin
           case(LED_BCD)
-               4'b0000: segments = 7'b0000001; // "0"
+               4'b0000: segments = 7'b1000000; // "0"
                4'b0001: segments = 7'b1001111; // "1"
                4'b0010: segments = 7'b0010010; // "2"
                4'b0011: segments = 7'b0000110; // "3"
