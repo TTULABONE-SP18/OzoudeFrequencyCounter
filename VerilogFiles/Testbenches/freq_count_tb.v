@@ -2,7 +2,7 @@
 // Frequency Counter Testbench Module
 
 module freq_count_tb();
-     wire [31:0] freq;
+     wire [15:0] freq;
      reg clk, in;
 
      initial begin
@@ -16,15 +16,10 @@ module freq_count_tb();
      always
           #10 clk = !clk;
 
-     freq_counter test(
+     freq_counter tb1(
           .CLK(clk),
           .IN(in),
           .freq(freq)
-       );
-
-     disp_controller test_disp(
-          .clk(clk),
-          .displayed_number(freq)
           );
 
 endmodule

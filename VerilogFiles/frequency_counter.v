@@ -17,24 +17,18 @@ module freq_counter(
 	input CLK,
 	// Pmod port input JA1, renamed in constraints file to IN
 	input [1:0] IN,
-	// 7-segment Display Cathodes
-	output [6:0] cathode,
-	// 7-segment Display Anodes
-	output [3:0] anode,
-	output DP);
-
 	// Register for frequency
-	reg [15:0] freq = 16'b0;
+	output reg [15:0] freq = 16'b0);
+
 	// Register for one second counter
 	reg[31:0] count = 32'b0;
 	// Register for input counter
-	reg [3:0]edge_count = 0;
+	reg [15:0]edge_count = 0;
 	// Register for storing last signal, used for detecting rising edge
 	reg last = 0;
 
 	// Assignments
-	assign DP = 1;
-	localparam max = 100000000;
+	localparam max = 'd100000000;
 
 	// Flip-flop stores last value in register
 	always @(posedge CLK) begin
@@ -46,9 +40,11 @@ module freq_counter(
 		case (1)
 			count < max: begin
 				// If detecting a HIGH and the last value was LOW, then it's a rising edge
+				count <= count + 1;
 				if(~last & IN)
 					edge_count <= edge_count + 1;
 				end
+
 
 			default: begin
 				freq <= edge_count;
@@ -57,12 +53,5 @@ module freq_counter(
 			end
 		endcase
 	end
-
-	disp_controller(
-		.clk(CLK),
-		.displayed_number(freq),
-		.digits(anode),
-		.segments(~cathode)
-		);
 
 endmodule

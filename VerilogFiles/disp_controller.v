@@ -4,15 +4,16 @@
 //         http://www.fpga4student.com/2017/09/seven-segment-led-display-controller-basys3-fpga.html
 
 // Description:
-// Methodology: 
+// Methodology:
 module disp_controller(
-     input clk, // 100 Mhz clock source on Basys 3 FPGA
-     input reset, // reset
-     output reg [3:0] digits, // anode signals of the 7-segment LED display
-     output reg [6:0] segments,// cathode patterns of the 7-segment LED display
-     input [15:0] displayed_number // counting number to be displayed
+     input CLK,                    // 100 MHz clock source on Basys 3 FPGA
+     input reset,                  // Reset button
+     output reg [3:0] digits,      // anode signals of the 7-segment LED display
+     output reg [6:0] segments,     // cathode patterns of the 7-segment LED display
+     input [1:0] IN
     );
 
+     wire [15:0] displayed_number; // counting number to be displayed
      reg [3:0] LED_BCD;
      reg [20:0] refresh_counter;   // The first 19 bits are for creating 190Hz refresh rate
                                    // The other 2 bits are for creating 4 LED-activating signals
@@ -20,16 +21,23 @@ module disp_controller(
           // count     0    ->  1  ->  2  ->  3
           // activates    LED1    LED2   LED3   LED4
           // and repeat
-     always @(posedge clk)
+     always @(posedge CLK)
           begin
              case(reset)
              1'b1: refresh_counter <= 0;
              default: refresh_counter <= refresh_counter + 1;
              endcase
           end
+
      assign LED_activating_counter = refresh_counter[20:19];
      // anode activating signals for 4 LEDs
      // decoder to generate anode signals
+     freq_counter sigin(
+          .CLK(CLK),
+          .IN(IN),
+          .freq(displayed_number)
+          );
+
      always @(*)
      begin
           case(LED_activating_counter)
