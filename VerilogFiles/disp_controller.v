@@ -15,9 +15,9 @@ module disp_controller(
      input IN
     );
 
-     wire [7:0] sig_bin;
+     wire [11:0] sig_bin;
      wire [15:0] displayed_number; // counting number to be displayed
-     wire [3:0] hundreds, tens, ones;
+     wire [3:0] thousands, hundreds, tens, ones;
      reg [3:0] LED_BCD;
      reg [20:0] refresh_counter;   // The first 19 bits are for creating 190Hz refresh rate
                                    // The other 2 bits are for creating 4 LED-activating signals
@@ -25,7 +25,7 @@ module disp_controller(
           // count     0    ->  1  ->  2  ->  3
           // activates    LED1    LED2   LED3   LED4
           // and repeat
-     assign displayed_number[15:4] = {hundreds,tens,ones};
+     assign displayed_number = {thousands,hundreds,tens,ones};
      always @(posedge CLK)
           begin
              case(reset)
@@ -44,6 +44,7 @@ module disp_controller(
           );
      bin_bcd converter(
           .binary(sig_bin),
+          .thousands(thousands),
           .hundreds(hundreds),
           .tens(tens),
           .ones(ones)
@@ -69,12 +70,12 @@ module disp_controller(
                     LED_BCD = displayed_number[7:4];
                     // the third digit of the 16-bit number
                end
-               // 2'b11: begin
-               //      digits = 4'b1110;
-               //      // activate LED4 and Deactivate LED2, LED3, LED1
-               //      LED_BCD = displayed_number[3:0];
-               //      // the fourth digit of the 16-bit number
-               // end
+               2'b11: begin
+                    digits = 4'b1110;
+                    // activate LED4 and Deactivate LED2, LED3, LED1
+                    LED_BCD = displayed_number[3:0];
+                    // the fourth digit of the 16-bit number
+               end
           endcase
      end
 
