@@ -22,7 +22,7 @@ module bin_bcd(binary, thousands, hundreds, tens, ones);
           ones = 4'b0;
           // Clear previous number and store new number in shift register
           shift = 0;
-          shift[7:0] = binary;
+          shift[11:0] = binary;
 
           // Loop eight times
           for (i=0; i<12; i=i+1)
