@@ -1,2 +1,2 @@
-## Project Lab 1 Spring 2018
-This repository contains the Verilog files, data sheets, and other related documents to Project Lab 1.
+## Frequency Counter
+This repository contains the verilog files and bitstream file for the frequency counter on the Basys 3.
