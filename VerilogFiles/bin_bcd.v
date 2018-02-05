@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
-// Credit: http://www.deathbylogic.com/2013/12/binary-to-binary-coded-decimal-bcd-converter/
+// Adapted From: http://www.deathbylogic.com/2013/12/binary-to-binary-coded-decimal-bcd-converter/
 // Minor changes made to adjust for 12 bit input, 16 bit output
 module bin_bcd(binary, thousands, hundreds, tens, ones);
      // I/O Signal Definitions
-     input  [7:0] binary;
+     input  [11:0] binary;
      output reg [3:0] thousands;
      output reg [3:0] hundreds;
      output reg [3:0] tens;
@@ -25,7 +25,7 @@ module bin_bcd(binary, thousands, hundreds, tens, ones);
           shift[11:0] = binary;
 
           // Loop eight times
-          for (i=0; i<12; i=i+1)
+          for (i = 0; i < 12; i = i + 1)
           begin
                if (shift[15:12] >= 5)
                     shift[15:12] = shift[15:12] + 3;
