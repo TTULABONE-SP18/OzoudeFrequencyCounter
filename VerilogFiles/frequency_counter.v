@@ -33,7 +33,7 @@ module freq_counter(
 	// different board with a different clock speed, this is the only line that would need to be
 	// changed. Adjust it for the appropriate clock speed as needed.
 
-	localparam max = 'd1000;           // Uncomment this out for testbench
+	localparam max = 'd10000;           // Uncomment this out for testbench
 	// localparam max = 'd100000000;         // Comment this for testbench
 
 	// Flip-flop stores last value in register
