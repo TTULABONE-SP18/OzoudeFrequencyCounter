@@ -1,40 +1,54 @@
-`timescale 1 ns / 1 ps
-// Binary to BCD Converter
-// Developer: Victoria Rodriguez
-// Description: Converts an 8 bit binary number to 12 bit BCD
-// Methodology: Shift-Add 3 Method
-// Status: Not working
-module bin_bcd(
-     // input clk,
-     input [7:0] bin,
-     output reg [3:0] hundreds,
-     output reg [3:0] tens,
-     output reg [3:0] ones
-     );
+`timescale 1ns / 1ps
+// Credit: http://www.deathbylogic.com/2013/12/binary-to-binary-coded-decimal-bcd-converter/
+// Minor changes made to adjust for 12 bit input, 16 bit output
+module bin_bcd(binary, thousands, hundreds, tens, ones);
+     // I/O Signal Definitions
+     input  [7:0] binary;
+     output reg [3:0] thousands;
+     output reg [3:0] hundreds;
+     output reg [3:0] tens;
+     output reg [3:0] ones;
 
+
+     // Internal variable for storing bits
+     reg [27:0] shift;
      integer i;
-     always @ (bin)
-     begin
-          hundreds  = 4'b0;
-          tens      = 4'b0;
-          ones      = 4'b0;
 
-          for (i=7; i >= 0; i = i - 1)
+     always @(binary)
+     begin
+          thousands = 4'b0;
+          hundreds = 4'b0;
+          tens = 4'b0;
+          ones = 4'b0;
+          // Clear previous number and store new number in shift register
+          shift = 0;
+          shift[11:0] = binary;
+
+          // Loop eight times
+          for (i=0; i<12; i=i+1)
           begin
-               case(1)
-                    hundreds >= 5: hundreds <= hundreds + 3;
-                    tens     >= 5: tens     <= tens     + 3;
-                    ones     >= 5: ones     <= ones     + 3;
-                    default: begin
-                    hundreds       <= hundreds << 1;
-                    hundreds[0]    <= tens[3];
-                    tens           <= tens     << 1;
-                    ones           <= ones     << 1;
-                    ones[0]        <= bin[1];
-                    end
-               endcase
-               // end
+               if (shift[15:12] >= 5)
+                    shift[15:12] = shift[15:12] + 3;
+
+               if (shift[19:16] >= 5)
+                    shift[19:16] = shift[19:16] + 3;
+
+               if (shift[23:20] >= 5)
+                    shift[23:20] = shift[23:20] + 3;
+
+               if (shift[27:24] >= 5)
+                    shift[27:24] = shift[27:24] + 3;
+
+               // Shift entire register left once
+               shift = shift << 1;
           end
+
+          // Push decimal numbers to output
+          thousands = shift[27:24];
+          hundreds  = shift[23:20];
+          tens      = shift[19:16];
+          ones      = shift[15:12];
+
      end
 
 endmodule

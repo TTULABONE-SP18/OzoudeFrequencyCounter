@@ -18,12 +18,12 @@ module freq_counter(
 	// Pmod port input JA1, renamed in constraints file to IN
 	input IN,
 	// Register for frequency
-	output reg [7:0] freq = 8'b0);
+	output reg [11:0] freq = 12'b0);
 
 	// Register for one second counter
 	reg[31:0] count = 32'b0;
 	// Register for input counter
-	reg [7:0] edge_count = 8'b0;
+	reg [11:0] edge_count = 12'b0;
 	// Register for storing last signal, used for detecting rising edge
 	reg last = 0;
 
@@ -33,8 +33,8 @@ module freq_counter(
 	// different board with a different clock speed, this is the only line that would need to be
 	// changed. Adjust it for the appropriate clock speed as needed.
 
-	// localparam max = 'd1000;           // Uncomment this out for testbench
-	localparam max = 'd100000000;         // Comment this for testbench
+	localparam max = 'd1000;           // Uncomment this out for testbench
+	// localparam max = 'd100000000;         // Comment this for testbench
 
 	// Flip-flop stores last value in register
 	always @(posedge CLK) begin
